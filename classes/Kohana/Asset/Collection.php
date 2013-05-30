@@ -240,9 +240,11 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
     {
         return usort($this->_assets, function(Asset $a, Asset $b) {
             if ($a->weight() === $b->weight())
+            {
                 return 0;
-            else
-                return $a->weight() - $b->weight();
+            }
+
+            return $a->weight() - $b->weight();
         });
     }
 
