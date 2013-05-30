@@ -13,7 +13,7 @@ abstract class Kohana_Asset_Block extends Asset {
 	 * @var  string  content
 	 */
 	protected $_content = NULL;
-	
+
 	public function content()
 	{
 		return $this->_content;
@@ -33,7 +33,11 @@ abstract class Kohana_Asset_Block extends Asset {
 
 		// Set condition
 		$this->_condition = Arr::get($options, 'condition');
-		
+
+        // Set weight
+        if ( ! empty($options['weight']))
+            $this->_weight  = $options['weight'];
+
 		// Set content, file and type
 		$this->_content = $content;
 		$this->_file    = 'Asset Block';
