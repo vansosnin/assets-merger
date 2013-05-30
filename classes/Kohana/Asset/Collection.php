@@ -78,10 +78,6 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 		// Set type and name
 		$this->_type = $type;
 		$this->_name = $name;
-
-		// Set asset file and web file
-		$this->_destination_file = Assets::file_path($type, $name.'.'.$type);
-		$this->_destination_web  = Assets::web_path($type, $name.'.'.$type);
 	}
 
 	/**
@@ -104,6 +100,37 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 		return $content;
 	}
 
+    protected function hash_content()
+    {
+        $haystack = '';
+
+        foreach ($this->assets() as $asset)
+        {
+            /* @var $asset Asset */
+            // If is Asset_Block
+            if ( ! $asset->source_file())
+            {
+                $haystack .= $asset->content();
+            }
+            else
+            {
+                $haystack .= $asset->source_file();
+            }
+
+            $haystack .= $asset->weight();
+        }
+
+        return hash('crc32b', $haystack);
+    }
+
+    protected function set_destinations()
+    {
+        $hash = $this->hash_content();
+
+        $this->_destination_file    = Assets::file_path($this->type(), $this->name().'-'.$hash.'.'.$this->type());
+        $this->_destination_web     = Assets::web_path($this->type(), $this->name().'-'.$hash.'.'.$this->type());
+    }
+
 	/**
 	 * Render HTML
 	 *
@@ -112,13 +139,15 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 	 */
 	public function render($process = FALSE)
 	{
+        $this->set_destinations();
+
 		if ($this->needs_recompile())
 		{
 			// Recompile file
 			file_put_contents($this->destination_file(), $this->compile($process));
 		}
 
-		return Asset::html($this->type(), $this->destination_web(), $this->last_modified());
+		return Asset::html($this->type(), $this->destination_web());
 	}
 
 	/**

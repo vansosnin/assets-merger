@@ -41,14 +41,8 @@ abstract class Kohana_Asset {
 	 * @param   integer  $cache_buster
 	 * @return  string
 	 */
-	public static function html($type, $file, $cache_buster = NULL)
+	public static function html($type, $file)
 	{
-		if ($cache_buster)
-		{
-			// Add last modified time to file name
-			$file = $file.'?'.$cache_buster;
-		}
-
 		// Set type for the proper HTML
 		switch ($type)
 		{
