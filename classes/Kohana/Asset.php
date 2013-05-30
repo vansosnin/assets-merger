@@ -60,8 +60,41 @@ abstract class Kohana_Asset {
 			break;
 		}
 
-		return HTML::$type($file);
+		return Asset::$type($file);
 	}
+
+    public static function valid_url($file)
+    {
+        return (strpos($file, '://') !== FALSE OR substr($file, 0, 2) === '//');
+    }
+
+    protected static function script($file)
+    {
+        if (!Asset::valid_url($file))
+        {
+            // Add base url
+            $file = URL::site($file);
+        }
+
+        return '<script'.HTML::attributes(array(
+            'src'   => $file,
+            'type'  => 'text/javascript'
+        )).'></script>';
+    }
+
+    protected static function style($file)
+    {
+        if (!Asset::valid_url($file))
+        {
+            // Add base url
+            $file = URL::site($file);
+        }
+
+        return '<link'.HTML::attributes(array(
+            'rel'   => 'stylesheet',
+            'href'  => $file
+        )).'>';
+    }
 
 	/**
 	 * Create inline HTML
@@ -95,7 +128,7 @@ abstract class Kohana_Asset {
 	 * @var  string  file
 	 */
 	protected $_file = NULL;
-	
+
 	/**
 	 * @var  array  engines
 	 */
@@ -163,7 +196,7 @@ abstract class Kohana_Asset {
 
 	/**
 	 * Get the engines that will be used to compile this asset
-	 * @return array 
+	 * @return array
 	 */
 	public function engines()
 	{
@@ -178,7 +211,7 @@ abstract class Kohana_Asset {
 	{
 		return $this->_type;
 	}
-	
+
 	/**
 	 * Get the processor of this asset
 	 * @return string
@@ -187,7 +220,7 @@ abstract class Kohana_Asset {
 	{
 		return $this->_processor;
 	}
-	
+
 	/**
 	 * Get the condition
 	 *
@@ -282,7 +315,7 @@ abstract class Kohana_Asset {
 		// Get file contents
 		$content = file_get_contents($this->source_file());
 
-		foreach ($this->engines() as $engine) 
+		foreach ($this->engines() as $engine)
 		{
 			// Process content with each engine
 			$content = Asset_Engine::process($engine, $content, $this);

@@ -185,7 +185,7 @@ abstract class Kohana_Assets {
 
 		// Return process
 		return $this->_process;
-	}	
+	}
 
 	function __toString()
 	{
@@ -218,12 +218,12 @@ abstract class Kohana_Assets {
 				foreach($group as $asset)
 				{
 					// Files not merged, add each of them to html
-					$html[] = $asset->render($this->_process);		
+					$html[] = $asset->render($this->_process);
 				}
 			}
 		}
 
-		foreach ($this->_conditional as $asset) 
+		foreach ($this->_conditional as $asset)
 		{
 			// Add conditional assets
 			$html[] .= Asset::conditional($asset->render($this->_process), $asset->condition());
@@ -269,7 +269,7 @@ abstract class Kohana_Assets {
 
 		// Return html
 		return join("\n", $html);
-	}	
+	}
 
 	/**
 	 * Adds assets to the appropriate type
@@ -282,7 +282,7 @@ abstract class Kohana_Assets {
 	 */
 	protected function add($class, $type, $file, array $options = array())
 	{
-		if (Valid::url($file))
+		if (Asset::valid_url($file))
 		{
 			// Remote asset
 			$remote = Asset::html($type, $file);
