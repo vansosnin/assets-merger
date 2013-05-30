@@ -97,9 +97,6 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 
 		foreach ($this->assets() as $asset)
 		{
-			// Add comment to content
-			$content .= "/* File: ".$asset->destination_web()."\n   Compiled at: ".date("Y-m-d H:i:s")." \n================================ */\n";
-
 			// Compile content
 			$content .= $asset->compile($process)."\n\n";
 		}

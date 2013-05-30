@@ -205,7 +205,7 @@ abstract class Kohana_Assets {
 		// Go through each asset group
 		foreach ($this->_groups as $type => $group)
 		{
-			if ( ! count($group))
+			if ($group->key() === NULL)
 				continue;
 
             // Sort Collection assets
