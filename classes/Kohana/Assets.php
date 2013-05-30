@@ -208,6 +208,9 @@ abstract class Kohana_Assets {
 			if ( ! count($group))
 				continue;
 
+            // Sort Collection assets
+            $group->sort();
+
 			if ($this->merge())
 			{
 				// Add merged file to html

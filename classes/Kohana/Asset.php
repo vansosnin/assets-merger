@@ -159,6 +159,11 @@ abstract class Kohana_Asset {
 	 */
 	protected $_condition = NULL;
 
+    /**
+     * @var int weight
+     */
+    protected $_weight = 0;
+
 	/**
 	 * @var  int  last modified time
 	 */
@@ -241,10 +246,14 @@ abstract class Kohana_Asset {
 	function __construct($type, $file, array $options = array())
 	{
 		// Set processor to use
-		$this->_processor = Arr::get($options, 'processor', Kohana::$config->load('asset-merger.processor.'.$type));
+		$this->_processor   = Arr::get($options, 'processor', Kohana::$config->load('asset-merger.processor.'.$type));
 
 		// Set condition
-		$this->_condition = Arr::get($options, 'condition');
+		$this->_condition   = Arr::get($options, 'condition');
+
+        // Set weight
+        if ( ! empty($options['weight']))
+            $this->_weight  = $options['weight'];
 
 		// Set type and file
 		$this->_type = $type;
@@ -362,6 +371,16 @@ abstract class Kohana_Asset {
 	{
 		return $this->render();
 	}
+
+    /**
+     * Get the weight
+     *
+     * @return int weight
+     */
+    public function weight()
+    {
+        return $this->_weight;
+    }
 
 	/**
 	 * Get and set the last modified time

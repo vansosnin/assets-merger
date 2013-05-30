@@ -177,9 +177,9 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 		}
 
 		return $new_arr;
-	}	
+	}
 
-	public function offsetSet($offset, $value) 
+	public function offsetSet($offset, $value)
 	{
 		if (is_null($offset))
 		{
@@ -191,17 +191,17 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 		}
 	}
 
-	public function offsetExists($offset) 
+	public function offsetExists($offset)
 	{
 		return isset($this->_assets[$offset]);
 	}
 
-	public function offsetUnset($offset) 
+	public function offsetUnset($offset)
 	{
 		unset($this->_assets[$offset]);
 	}
 
-	public function offsetGet($offset) 
+	public function offsetGet($offset)
 	{
 		return isset($this->_assets[$offset]) ? $this->_assets[$offset] : NULL;
 	}
@@ -235,5 +235,15 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 	{
 		return count($this->_assets);
 	}
+
+    public function sort()
+    {
+        return usort($this->_assets, function(Asset $a, Asset $b) {
+            if ($a->weight() === $b->weight())
+                return 0;
+            else
+                return $a->weight() - $b->weight();
+        });
+    }
 
 } // End Asset_Collection
