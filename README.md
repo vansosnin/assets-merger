@@ -4,6 +4,7 @@
 - Add the possibility to set a relative destination folder (from folder in config) per group (optional)
 `Assets::instance('main','/MyRelativeFolder/')`
 - Add the possibility to change the load_paths per file (optional: if not -> take load_paths in the config file)
+
 ``` php
 	<?php	$options['load_paths'] = $load_paths;
 		echo Assets::instance('main')
