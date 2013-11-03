@@ -35,6 +35,11 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 	protected $_destination_web;
 
 	/**
+	 * @var  string destination path of the merged asset file
+	 */
+	protected $_destination_path = NULL;
+
+	/**
 	 * @var  int  last modified time
 	 */
 	protected $_last_modified = NULL;
@@ -47,6 +52,11 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 	public function destination_web()
 	{
 		return $this->_destination_web;
+	}
+
+	public function destination_path()
+	{
+		return $this->_destination_path;
 	}
 
 	public function type()
@@ -70,7 +80,7 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 	 * @param  string  $type
 	 * @param  string  $name
 	 */
-	public function __construct($type, $name = 'all')
+	public function __construct($type, $name = 'all', $destination_path = NULL)
 	{
 		// Check type
 		Assets::require_valid_type($type);
@@ -78,6 +88,7 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 		// Set type and name
 		$this->_type = $type;
 		$this->_name = $name;
+		$this->_destination_path = $destination_path;
 	}
 
 	/**
@@ -126,9 +137,8 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
     protected function set_destinations()
     {
         $hash = $this->hash_content();
-
-        $this->_destination_file    = Assets::file_path($this->type(), $this->name().'-'.$hash.'.'.$this->type());
-        $this->_destination_web     = Assets::web_path($this->type(), $this->name().'-'.$hash.'.'.$this->type());
+        $this->_destination_file    = Assets::file_path($this->type(), $this->name().'-'.$hash.'.'.$this->type(), $this->destination_path());
+        $this->_destination_web     = Assets::web_path($this->type(), $this->name().'-'.$hash.'.'.$this->type(), $this->destination_path());
     }
 
 	/**

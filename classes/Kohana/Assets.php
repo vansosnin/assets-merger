@@ -142,7 +142,7 @@ abstract class Kohana_Assets {
 		foreach (array_keys(Kohana::$config->load('asset-merger.load_paths')) as $type)
 		{
 			// Add asset groups
-			$this->_groups[$type] = new Asset_Collection($type, $name);
+			$this->_groups[$type] = new Asset_Collection($type, $name, $destination_path);
 		}
 
 		// Set the merged file name
