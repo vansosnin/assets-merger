@@ -40,12 +40,17 @@ abstract class Kohana_Assets {
 	 * @param   string  $file
 	 * @return  string
 	 */
-	public static function file_path($type, $file)
+	public static function file_path($type, $file, $destination_path = NULL)
 	{
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
 
-		return Kohana::$config->load('asset-merger.docroot').Kohana::$config->load('asset-merger.folder').DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
+		return Kohana::$config->load('asset-merger.docroot').Kohana::$config->load('asset-merger.folder').DIRECTORY_SEPARATOR.$destination_path.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
+	}
+
+	public function destination_path()
+	{
+		return $this->_destination_path;
 	}
 
 	/**
@@ -55,12 +60,12 @@ abstract class Kohana_Assets {
 	 * @param   string  $file
 	 * @return  string
 	 */
-	public static function web_path($type, $file)
+	public static function web_path($type, $file, $destination_path)
 	{
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
 
-		return Kohana::$config->load('asset-merger.folder').'/'.$type.'/'.$file;
+		return Kohana::$config->load('asset-merger.folder').'/'.$destination_path.'/'.$type.'/'.$file;
 	}
 
 	// Default short names for types
@@ -88,6 +93,11 @@ abstract class Kohana_Assets {
 	protected $_name;
 
 	/**
+	 * @var  string destination path of the merged asset file
+	 */
+	protected $_destination_path = NULL;
+
+	/**
 	 * @var  array  remote assets
 	 */
 	protected $_remote = array();
@@ -108,7 +118,7 @@ abstract class Kohana_Assets {
 	 * @param   $group   string
 	 * @return  Assets
 	 */
-	static public function instance($group)
+	static public function instance($group, $destination_path = NULL)
 	{
 		if (isset(self::$instances[$group]))
 		{
@@ -116,7 +126,7 @@ abstract class Kohana_Assets {
 		}
 		else
 		{
-			self::$instances[$group] = new Assets($group);
+			self::$instances[$group] = new Assets($group, $destination_path);
 		}
 		return self::$instances[$group];
 	}
@@ -127,7 +137,7 @@ abstract class Kohana_Assets {
 	 *
 	 * @param string $name
 	 */
-	public function __construct($name = 'all')
+	public function __construct($name = 'all', $destination_path = NULL)
 	{
 		foreach (array_keys(Kohana::$config->load('asset-merger.load_paths')) as $type)
 		{
@@ -137,6 +147,9 @@ abstract class Kohana_Assets {
 
 		// Set the merged file name
 		$this->_name = $name;
+
+		// Set the destination path
+		$this->_destination_path = $destination_path;
 
 		// Set process and merge
 		$this->_process = $this->_merge = in_array(Kohana::$environment, (array) Kohana::$config->load('asset-merger.merge'));
@@ -311,12 +324,12 @@ abstract class Kohana_Assets {
 		elseif (Arr::get($options, 'condition'))
 		{
 			// Conditional asset, add to conditionals
-			$this->_conditional[] = new $class($type, $file, $options);
+			$this->_conditional[] = new $class($type, $file, $options, $this->_destination_path);
 		}
 		else
 		{
 			// Regular asset, add to groups
-			$this->_groups[$type][] = new $class($type, $file, $options);
+			$this->_groups[$type][] = new $class($type, $file, $options, $this->_destination_path);
 		}
 
 		return $this;

@@ -124,6 +124,11 @@ abstract class Kohana_Asset {
 	protected $_file = NULL;
 
 	/**
+	 * @var  string  load paths
+	 */
+	protected $_load_paths = NULL;
+
+	/**
 	 * @var  array  engines
 	 */
 	protected $_engines = array();
@@ -171,6 +176,16 @@ abstract class Kohana_Asset {
 	public function source_file()
 	{
 		return $this->_source_file;
+	}
+
+	/**
+	 * Get the source type paths
+	 *
+	 * @return string
+	 */
+	public function load_paths()
+	{
+		return $this->_load_paths;
 	}
 
 	/**
@@ -237,7 +252,7 @@ abstract class Kohana_Asset {
 	 * @param  string  $file
 	 * @param  array   $options
 	 */
-	function __construct($type, $file, array $options = array())
+	function __construct($type, $file, array $options = array(), $destination_path = NULL)
 	{
 		// Set processor to use
 		$this->_processor   = Arr::get($options, 'processor', Kohana::$config->load('asset-merger.processor.'.$type));
@@ -248,6 +263,16 @@ abstract class Kohana_Asset {
         // Set weight
         if ( ! empty($options['weight']))
             $this->_weight  = $options['weight'];
+
+        // Set load paths
+        if ( ! empty($options['load_paths']))
+		{
+            $this->_load_paths  = $options['load_paths'][$type];
+		}
+		elseif (Kohana::$config->load('asset-merger.load_paths.'.$type))
+		{
+			$this->_load_paths  = Kohana::$config->load('asset-merger.load_paths.'.$type);
+		}
 
 		// Set type and file
 		$this->_type = $type;
@@ -265,17 +290,17 @@ abstract class Kohana_Asset {
 		}
 
 		// Look for the specified file in each load path
-		foreach ( (array) Kohana::$config->load('asset-merger.load_paths.'.$type) as $path)
-		{
-			if (is_file($path.$file))
-			{
-				// Set the destination and source file
-				$this->_destination_file = Assets::file_path($type, $file);
-				$this->_source_file      = $path.$file;
+		foreach ((array) $this->_load_paths as $path) {
 
-				// Don't continue
-				break;
-			}
+				if (is_file($path.DIRECTORY_SEPARATOR.$file))
+				{
+					// Set the destination and source file
+					$this->_destination_file = Assets::file_path($type, $file, $destination_path);
+					$this->_source_file = $path.DIRECTORY_SEPARATOR.$file;	
+					
+					// Don't continue
+					break;
+				}
 		}
 
 		if ( ! $this->source_file())
@@ -304,7 +329,7 @@ abstract class Kohana_Asset {
 		$this->_engines = array_reverse(array_slice($fileparts, $extension_index + 1));
 
 		// Set the web destination
-		$this->_destination_web = Assets::web_path($type, $file);
+		$this->_destination_web = Assets::web_path($type, $file, $destination_path);
 	}
 
 	/**
