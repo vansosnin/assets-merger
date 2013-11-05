@@ -11,11 +11,11 @@ abstract class Kohana_Assets {
 
 	public static function require_valid_type($type)
 	{
-		if ( ! in_array($type, array_keys(Kohana::$config->load('asset-merger.load_paths'))))
+		if ( ! in_array($type, array_keys(Kohana::$config->load('asset-merger')->get('load_paths'))))
 		{
 			throw new Kohana_Exception('Type :type must be one of [:types]', array(
 				':type'  => $type,
-				':types' => join(', ', array_keys(Kohana::$config->load('asset-merger.load_paths'))))
+				':types' => join(', ', array_keys(Kohana::$config->load('asset-merger')->get('load_paths'))))
 			);
 		}
 		return TRUE;
@@ -45,7 +45,7 @@ abstract class Kohana_Assets {
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
 
-		return Kohana::$config->load('asset-merger.docroot').Kohana::$config->load('asset-merger.folder').DIRECTORY_SEPARATOR.$destination_path.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
+		return Kohana::$config->load('asset-merger')->get('docroot').Kohana::$config->load('asset-merger')->get('folder').DIRECTORY_SEPARATOR.$destination_path.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
 	}
 
 	public function destination_path()
@@ -65,7 +65,7 @@ abstract class Kohana_Assets {
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
 
-		return Kohana::$config->load('asset-merger.folder').'/'.$destination_path.'/'.$type.'/'.$file;
+		return Kohana::$config->load('asset-merger')->get('folder').'/'.$destination_path.'/'.$type.'/'.$file;
 	}
 
 	// Default short names for types
@@ -152,12 +152,21 @@ abstract class Kohana_Assets {
 		$this->_destination_path = $destination_path;
 
 		// Set process and merge
-		$this->_process = $this->_merge = in_array(Kohana::$environment, (array) Kohana::$config->load('asset-merger.merge'));
+		$this->_process = $this->_merge = in_array(Kohana::$environment, (array) Kohana::$config->load('asset-merger')->get('merge'));
 	}
 
 	public function name()
 	{
 		return $this->_name;
+	}
+
+	public static function folder()
+	{
+		return rtrim(Kohana::$config->load('asset-merger')->folder,"/");
+	}
+	public static function folder_abs()
+	{
+		return Kohana::$config->load('asset-merger')->docroot.Kohana::$config->load('asset-merger')->folder;
 	}
 
 	/**
