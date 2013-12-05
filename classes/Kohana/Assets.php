@@ -258,7 +258,7 @@ abstract class Kohana_Assets {
 		}
 
 		// Return html
-		return join("\n", $html);
+		return join("\n\t", $html);
 	}
 
 	/**
