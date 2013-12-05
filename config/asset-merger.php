@@ -2,7 +2,9 @@
 
 return array(
 	'merge'      => array(Kohana::PRODUCTION, Kohana::STAGING),
-	'folder'     => 'assets',
+	'folder'     => 'assets'.DIRECTORY_SEPARATOR,
+	// 'folder_dev'     => 'assets_dev'.DIRECTORY_SEPARATOR,
+	// 'dev' => false,
 	'load_paths' => array(
 		Assets::JAVASCRIPT => DOCROOT.'assets'.DIRECTORY_SEPARATOR,
 		Assets::STYLESHEET => DOCROOT.'assets'.DIRECTORY_SEPARATOR

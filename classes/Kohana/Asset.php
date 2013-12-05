@@ -291,10 +291,15 @@ abstract class Kohana_Asset {
 
 		// Look for the specified file in each load path
 		foreach ((array) $this->_load_paths as $path) {
+			if (Kohana::$config->load('asset-merger')->get('dev')){
+				$destination_path = $path;
+				$path = Kohana::$config->load('asset-merger')->get('docroot').Kohana::$config->load('asset-merger')->get('folder_dev').DIRECTORY_SEPARATOR.$path;
+			}
 
 				if (is_file($path.DIRECTORY_SEPARATOR.$file))
 				{
 					// Set the destination and source file
+					// if (Kohana::$config->load('asset-merger')->get('dev'))
 					$this->_destination_file = Assets::file_path($type, $file, $destination_path);
 					$this->_source_file = $path.DIRECTORY_SEPARATOR.$file;	
 					
@@ -313,8 +318,9 @@ abstract class Kohana_Asset {
 			));
 		}
 
-		if ( ! is_dir(dirname($this->destination_file())))
+		if ( ! is_dir(dirname($this->destination_file())) and !Kohana::$config->load('asset-merger')->get('dev'))
 		{
+			print_r($this->destination_file());
 			// Create directory for destination file
 			mkdir(dirname($this->destination_file()), 0777, TRUE);
 		}
@@ -424,7 +430,8 @@ abstract class Kohana_Asset {
 	 */
 	public function needs_recompile()
 	{
-		return Assets::is_modified_later($this->destination_file(), $this->last_modified());
+		return (Assets::is_modified_later($this->destination_file(), $this->last_modified()) and (!Kohana::$config->load('asset-merger')->get('dev')));
+		// return Assets::is_modified_later($this->destination_file(), $this->last_modified());
 	}
 
 } // End Asset

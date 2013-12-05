@@ -45,6 +45,8 @@ abstract class Kohana_Assets {
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
 
+        if (Kohana::$config->load('asset-merger')->get('dev'))
+            return Kohana::$config->load('asset-merger')->get('docroot').Kohana::$config->load('asset-merger')->get('folder_dev').DIRECTORY_SEPARATOR.$destination_path.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
 		return Kohana::$config->load('asset-merger')->get('docroot').Kohana::$config->load('asset-merger')->get('folder').DIRECTORY_SEPARATOR.$destination_path.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
 	}
 
@@ -64,7 +66,8 @@ abstract class Kohana_Assets {
 	{
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
-
+        if (Kohana::$config->load('asset-merger')->get('dev'))
+            return Kohana::$config->load('asset-merger')->get('folder_dev').'/'.$destination_path.'/'.$file;
 		return Kohana::$config->load('asset-merger')->get('folder').'/'.$destination_path.'/'.$type.'/'.$file;
 	}
 
