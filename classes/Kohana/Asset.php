@@ -299,7 +299,6 @@ abstract class Kohana_Asset {
 		// Set type and file
 		$this->_type = $type;
 		$this->_file = $file;
-
 		$this->_copy = $copy;
 
 		// Check if the type is a valid type
@@ -337,7 +336,7 @@ abstract class Kohana_Asset {
 			));
 		}
 
-		if ( ! is_dir(dirname($this->destination_file())) and !Kohana::$config->load('asset-merger')->get('dev') and $this->copy())
+		if ( ! is_dir(dirname($this->destination_file())) and $this->copy())
 		{
 			// Create directory for destination file
 			mkdir(dirname($this->destination_file()), 0777, TRUE);

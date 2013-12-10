@@ -149,8 +149,9 @@ abstract class Kohana_Assets {
 	 */
 	public function __construct($name = 'all', $destination_path = NULL, $copy = NULL, $folder = NULL)
 	{
+
 		// Set copy
-        if ($copy == NULL){
+        if ($copy === NULL){
             if (Kohana::$config->load('asset-merger')->get('debug')) 
             {
                 $this->_copy = FALSE;
@@ -159,6 +160,10 @@ abstract class Kohana_Assets {
             {
                 $this->_copy = TRUE;
             }      
+        }
+        else
+        {
+            $this->_copy = $copy;
         }
 
 		// Set folder
