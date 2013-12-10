@@ -189,7 +189,7 @@ abstract class Kohana_Assets {
 		$this->_destination_path = $destination_path;
 
 		// Set process and merge
-		$this->_process = $this->_merge = in_array(Kohana::$environment, (array) Kohana::$config->load('asset-merger')->get('merge')) and $this->_copy;
+		$this->_process = $this->_merge = (in_array(Kohana::$environment, (array) Kohana::$config->load('asset-merger')->get('merge')) and $this->_copy);
 	}
 
 	public function name()
@@ -235,7 +235,7 @@ abstract class Kohana_Assets {
 	 */
 	public function copy($copy = NULL)
 	{
-		if ($merge !== NULL)
+		if ($copy !== NULL)
 		{
 			// Set merge
 			$this->_copy = (bool) $copy;
@@ -244,7 +244,7 @@ abstract class Kohana_Assets {
 		}
 
 		// Return merge
-		return $this->_merge;
+		return $this->_copy;
 	}
 
 	/**
