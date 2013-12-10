@@ -25,6 +25,11 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 	protected $_type;
 
 	/**
+	 * @var  string  type
+	 */
+	protected $_copy = TRUE;
+
+	/**
 	 * @var  string  asset file
 	 */
 	protected $_destination_file;
@@ -69,6 +74,15 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 		return $this->_name;
 	}
 
+	public function copy()
+	{
+		return $this->_copy;
+	}
+	public function folder()
+	{
+		return $this->_folder;
+	}
+
 	public function assets()
 	{
 		return $this->_assets;
@@ -80,7 +94,7 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 	 * @param  string  $type
 	 * @param  string  $name
 	 */
-	public function __construct($type, $name = 'all', $destination_path = NULL)
+	public function __construct($type, $name = 'all', $destination_path = NULL,$copy = TRUE, $folder)
 	{
 		// Check type
 		Assets::require_valid_type($type);
@@ -88,6 +102,8 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 		// Set type and name
 		$this->_type = $type;
 		$this->_name = $name;
+		$this->_copy = $copy;
+		$this->_folder = $folder;
 		$this->_destination_path = $destination_path;
 	}
 
@@ -137,8 +153,8 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
     protected function set_destinations()
     {
         $hash = $this->hash_content();
-        $this->_destination_file    = Assets::file_path($this->type(), $this->name().'-'.$hash.'.'.$this->type(), $this->destination_path());
-        $this->_destination_web     = Assets::web_path($this->type(), $this->name().'-'.$hash.'.'.$this->type(), $this->destination_path());
+        $this->_destination_file    = Assets::file_path($this->type(), $this->name().'-'.$hash.'.'.$this->type(), $this->destination_path(),$this->folder());
+        $this->_destination_web     = Assets::web_path($this->type(), $this->name().'-'.$hash.'.'.$this->type(), $this->destination_path(),$this->folder());
     }
 
 	/**
@@ -151,7 +167,7 @@ abstract class Kohana_Asset_Collection implements Iterator, Countable, ArrayAcce
 	{
         $this->set_destinations();
 
-		if ($this->needs_recompile())
+		if ($this->needs_recompile() AND $this->copy())
 		{
 			// Recompile file
 			file_put_contents($this->destination_file(), $this->compile($process));

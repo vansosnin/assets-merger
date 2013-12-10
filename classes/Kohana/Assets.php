@@ -40,14 +40,12 @@ abstract class Kohana_Assets {
 	 * @param   string  $file
 	 * @return  string
 	 */
-	public static function file_path($type, $file, $destination_path = NULL)
+	public static function file_path($type, $file, $destination_path = NULL,$folder)
 	{
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
 
-        if (Kohana::$config->load('asset-merger')->get('dev'))
-            return Kohana::$config->load('asset-merger')->get('docroot').Kohana::$config->load('asset-merger')->get('folder_dev').DIRECTORY_SEPARATOR.$destination_path.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
-		return Kohana::$config->load('asset-merger')->get('docroot').Kohana::$config->load('asset-merger')->get('folder').DIRECTORY_SEPARATOR.$destination_path.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
+		return Kohana::$config->load('asset-merger')->get('docroot').$folder.DIRECTORY_SEPARATOR.$destination_path.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
 	}
 
 	public function destination_path()
@@ -62,13 +60,12 @@ abstract class Kohana_Assets {
 	 * @param   string  $file
 	 * @return  string
 	 */
-	public static function web_path($type, $file, $destination_path)
+	public static function web_path($type, $file, $destination_path, $folder)
 	{
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
-        if (Kohana::$config->load('asset-merger')->get('dev'))
-            return Kohana::$config->load('asset-merger')->get('folder_dev').'/'.$destination_path.'/'.$file;
-		return Kohana::$config->load('asset-merger')->get('folder').'/'.$destination_path.'/'.$type.'/'.$file;
+
+		return $folder.'/'.$destination_path.'/'.$type.'/'.$file;
 	}
 
 	// Default short names for types
@@ -90,10 +87,20 @@ abstract class Kohana_Assets {
 	 */
 	protected $_process = FALSE;
 
+    /**
+	 * @var  bool  copy process and merge or not
+	 */
+	protected $_copy = TRUE;
+
 	/**
 	 * @var  string  name of the merged asset file
 	 */
 	protected $_name;
+
+	/**
+	 * @var  string folder destination relative to docroot
+	 */
+	protected $_folder = NULL;
 
 	/**
 	 * @var  string destination path of the merged asset file
@@ -121,7 +128,7 @@ abstract class Kohana_Assets {
 	 * @param   $group   string
 	 * @return  Assets
 	 */
-	static public function instance($group, $destination_path = NULL)
+	static public function instance($group, $destination_path = NULL, $copy = NULL, $folder = NULL)
 	{
 		if (isset(self::$instances[$group]))
 		{
@@ -129,7 +136,7 @@ abstract class Kohana_Assets {
 		}
 		else
 		{
-			self::$instances[$group] = new Assets($group, $destination_path);
+			self::$instances[$group] = new Assets($group, $destination_path, $copy, $folder);
 		}
 		return self::$instances[$group];
 	}
@@ -140,12 +147,34 @@ abstract class Kohana_Assets {
 	 *
 	 * @param string $name
 	 */
-	public function __construct($name = 'all', $destination_path = NULL)
+	public function __construct($name = 'all', $destination_path = NULL, $copy = NULL, $folder = NULL)
 	{
+		// Set copy
+        if ($copy == NULL){
+            if (Kohana::$config->load('asset-merger')->get('debug')) 
+            {
+                $this->_copy = FALSE;
+            }
+            else
+            {
+                $this->_copy = TRUE;
+            }      
+        }
+
+		// Set folder
+        if ($folder == NULL)
+        {
+            $this->_folder = Kohana::$config->load('asset-merger')->get('folder');
+        }
+        else
+        {
+            $this->_folder = $folder;
+        }  
+
 		foreach (array_keys(Kohana::$config->load('asset-merger.load_paths')) as $type)
 		{
 			// Add asset groups
-			$this->_groups[$type] = new Asset_Collection($type, $name, $destination_path);
+			$this->_groups[$type] = new Asset_Collection($type, $name, $destination_path, $this->_copy, $this->_folder);
 		}
 
 		// Set the merged file name
@@ -155,7 +184,7 @@ abstract class Kohana_Assets {
 		$this->_destination_path = $destination_path;
 
 		// Set process and merge
-		$this->_process = $this->_merge = in_array(Kohana::$environment, (array) Kohana::$config->load('asset-merger')->get('merge'));
+		$this->_process = $this->_merge = in_array(Kohana::$environment, (array) Kohana::$config->load('asset-merger')->get('merge')) and $this->_copy;
 	}
 
 	public function name()
@@ -163,13 +192,14 @@ abstract class Kohana_Assets {
 		return $this->_name;
 	}
 
-	public static function folder()
+	public function folder()
 	{
-		return rtrim(Kohana::$config->load('asset-merger')->folder,"/");
+		return rtrim($this->_folder,"/");
 	}
-	public static function folder_abs()
+
+	public function folder_abs()
 	{
-		return Kohana::$config->load('asset-merger')->docroot.Kohana::$config->load('asset-merger')->folder;
+		return Kohana::$config->load('asset-merger')->docroot.$this->_folder;
 	}
 
 	/**
@@ -184,6 +214,26 @@ abstract class Kohana_Assets {
 		{
 			// Set merge
 			$this->_merge = (bool) $merge;
+
+			return $this;
+		}
+
+		// Return merge
+		return $this->_merge;
+	}
+
+	/**
+	 * Get and set copy
+	 *
+	 * @param   NULL|bool  $copy
+	 * @return  Assets|bool
+	 */
+	public function copy($copy = NULL)
+	{
+		if ($merge !== NULL)
+		{
+			// Set merge
+			$this->_copy = (bool) $copy;
 
 			return $this;
 		}
@@ -336,12 +386,12 @@ abstract class Kohana_Assets {
 		elseif (Arr::get($options, 'condition'))
 		{
 			// Conditional asset, add to conditionals
-			$this->_conditional[] = new $class($type, $file, $options, $this->_destination_path);
+			$this->_conditional[] = new $class($type, $file, $options, $this->_destination_path,$this->_copy,$this->_folder);
 		}
 		else
 		{
 			// Regular asset, add to groups
-			$this->_groups[$type][] = new $class($type, $file, $options, $this->_destination_path);
+			$this->_groups[$type][] = new $class($type, $file, $options, $this->_destination_path,$this->_copy,$this->_folder);
 		}
 
 		return $this;
