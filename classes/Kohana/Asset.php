@@ -135,7 +135,7 @@ abstract class Kohana_Asset
 	protected $_load_paths = NULL;
 
 	/**
-	 * @va array engines
+	 * @var array engines
 	 */
 	protected $_engines = array();
 
@@ -407,7 +407,7 @@ abstract class Kohana_Asset
 	 */
 	public function render($process = FALSE)
 	{
-		if ($this->needs_recompile() and $this->copy())
+		if (Kohana::$config->load('asset-merger')->get('debug') OR $this->needs_recompile() AND $this->copy())
 		{
 			// Recompile file
 			file_put_contents($this->destination_file(), $this->compile($process));
