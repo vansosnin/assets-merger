@@ -24,8 +24,9 @@ abstract class Kohana_Assets {
 	/**
 	 * Determine if file was modified later then source
 	 *
-	 * @param   string  $file
-	 * @param   string  $source_modified_time
+	 * @param   string $file
+	 * @param   string $source_modified_time
+	 *
 	 * @return  bool
 	 */
 	public static function is_modified_later($file, $source_modified_time)
@@ -36,16 +37,27 @@ abstract class Kohana_Assets {
 	/**
 	 * Set file path
 	 *
-	 * @param   string  $type
-	 * @param   string  $file
-	 * @return  string
+	 * @param string $type
+	 * @param string $file
+	 * @param string $destination_path
+	 * @param string $folder
+	 *
+	 * @return string
 	 */
-	public static function file_path($type, $file, $destination_path = NULL,$folder)
+	public static function file_path($type, $file, $destination_path = NULL, $folder)
 	{
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
 
-		return Kohana::$config->load('asset-merger')->get('docroot').$folder.DIRECTORY_SEPARATOR.$destination_path.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.$file;
+		$file_path = rtrim(Kohana::$config->load('asset-merger')->get('docroot'), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+
+		$file_path .= trim($folder, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+
+		$destination_path AND $file_path .= trim($destination_path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+
+		$file_path .= $type.DIRECTORY_SEPARATOR.$file;
+
+		return $file_path;
 	}
 
 	public function destination_path()
@@ -56,16 +68,24 @@ abstract class Kohana_Assets {
 	/**
 	 * Set web path
 	 *
-	 * @param   string  $type
-	 * @param   string  $file
-	 * @return  string
+	 * @param string $type
+	 * @param string $file
+	 * @param string $folder
+	 *
+	 * @return string
 	 */
 	public static function web_path($type, $file, $destination_path, $folder)
 	{
 		// Set file
 		$file = substr($file, 0, strrpos($file, $type)).$type;
 
-		return $folder.'/'.$destination_path.'/'.$type.'/'.$file;
+		$web_path = rtrim($folder, '/').'/';
+
+		$destination_path AND $web_path .= rtrim($destination_path, '/').'/';
+
+		$web_path .= $type.'/'.$file;
+
+		return $web_path;
 	}
 
 	// Default short names for types
