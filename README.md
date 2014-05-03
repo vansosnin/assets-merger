@@ -11,8 +11,6 @@
 		     ->css('css/homepage.css',$options)
 	?>
 ```
-- Add dev variable with dev folder for debug. No merge. No copy. Webpath equivalent to source path. Not sure yet it's the good way to do it (maybe a serving controller would be better), but it's convenient for me now (livereload, etc). See dev and folder_dev var in config.
-My use of it is to symlink assets_dev to my «working assets folder» when developping.
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
