@@ -407,7 +407,7 @@ abstract class Kohana_Asset
 	 */
 	public function render($process = FALSE)
 	{
-		if (Kohana::$config->load('asset-merger')->get('debug') OR $this->needs_recompile() AND $this->copy())
+		if ($this->needs_recompile() AND $this->copy())
 		{
 			// Recompile file
 			file_put_contents($this->destination_file(), $this->compile($process));
@@ -466,7 +466,7 @@ abstract class Kohana_Asset
 	 */
 	public function needs_recompile()
 	{
-		return Assets::is_modified_later($this->destination_file(), $this->last_modified());
+		return Assets::has_changed($this->destination_file(), $this->last_modified(), $this->source_file());
 	}
 
 } // End Asset
