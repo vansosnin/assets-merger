@@ -232,8 +232,7 @@ For this to work you will need to have this in your bootstrap.php file:
 License
 -------
 
-jamaker is Copyright © 2012 Despark Ltd. developed by Ivan Kerin. It is free software, and may be redistributed under the terms specified in the LICENSE file.
-
+This is licensed under the [same license as Kohana](http://kohanaframework.org/license).
 
 
 
