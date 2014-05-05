@@ -70,6 +70,7 @@
       "type": "package",
       "package": {
         "name": "yui/yuicompressor",
+        "type": "component",
         "version": "2.4.8",
         "dist": {
           "url": "https://github.com/yui/yuicompressor/releases/download/v2.4.8/yuicompressor-2.4.8.jar",
