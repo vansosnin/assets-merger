@@ -1,8 +1,8 @@
 {
-  "name": "alle/asset-merger",
+  "name": "alle/kohana-assets-merger",
   "type": "kohana-module",
   "description": "Managing and merging assets for Kohana",
-  "homepage": "https://github.com/alle/asset-merger",
+  "homepage": "https://github.com/alle/kohana-assets-merger",
   "license": "BSD-3-Clause",
   "keywords": ["kohana", "assets"],
   "authors": [
