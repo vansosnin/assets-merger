@@ -16,7 +16,7 @@ abstract class Kohana_Asset_Processor_Yuijs {
 		file_put_contents($tmp_file, $content);
 
 		// Include the processor
-		$jar = Kohana::find_file('vendor/yuicompressor', 'yuicompressor-2.4.8pre', 'jar');
+		$jar = Kohana::find_file('vendor/yiu/yuicompressor', 'yuicompressor-2.4.8pre', 'jar');
 
 		// Build our command.
 		$cmd = 'java -jar '.
@@ -29,6 +29,8 @@ abstract class Kohana_Asset_Processor_Yuijs {
 		exec($cmd);
 		$contents = file_get_contents($tmp_file);
 		unlink($tmp_file);
+
 		return $contents;
 	}
+
 }

@@ -17,10 +17,7 @@ abstract class Kohana_Asset_Processor_Cssmin {
 	 */
 	static public function process($content)
 	{
-		// Include the processor
-		include_once Kohana::find_file('vendor', 'cssmin/cssmin-v1.0.1.b3');
-
-		return cssmin::minify($content);
+		return CssMin::minify($content);
 	}
 
 } // End Asset_Processor_Cssmin

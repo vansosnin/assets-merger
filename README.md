@@ -169,10 +169,10 @@ Each type and individual file can be set to be processed by a processor - this i
 
 __Available engines__ :
 
- - cssmin - [http://code.google.com/p/cssmin/](http://code.google.com/p/cssmin/)
+ - CssMin - [http://code.google.com/p/cssmin/](http://code.google.com/p/cssmin/)
  - csscompressor - [http://minify.googlecode.com/svn/trunk/min/lib/Minify/CSS/Compressor.php](http://minify.googlecode.com/svn/trunk/min/lib/Minify/CSS/Compressor.php)
- - jsmin - [http://code.google.com/p/jsmin-php/](http://code.google.com/p/jsmin-php/)
- - jsminplus - [http://code.google.com/p/minify/source/browse/trunk/min/lib/JSMinPlus.php](http://code.google.com/p/minify/source/browse/trunk/min/lib/JSMinPlus.php)
+ - JSMin - [http://code.google.com/p/jsmin-php/](http://code.google.com/p/jsmin-php/)
+ - JSMinPlus - [https://code.google.com/p/minify/source/browse/min/lib/JSMinPlus.php](https://code.google.com/p/minify/source/browse/min/lib/JSMinPlus.php)
 
 
 Assets Class
