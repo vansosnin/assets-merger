@@ -22,7 +22,7 @@ abstract class Kohana_Asset_Engine_Sass {
 		$old = error_reporting(E_ALL & ~(E_NOTICE | E_DEPRECATED | E_STRICT));
 
 		// Set SASS
-		$sass = new SassParser(array());
+		$sass = new SassParser();
 
 		// Set content
 		$content = $sass->toCss($content, false);

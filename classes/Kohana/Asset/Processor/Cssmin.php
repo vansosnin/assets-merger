@@ -17,7 +17,9 @@ abstract class Kohana_Asset_Processor_Cssmin {
 	 */
 	static public function process($content)
 	{
-		return CssMin::minify($content);
+		$cssmin = new CSSmin;
+
+		return $cssmin->run($content);
 	}
 
 } // End Asset_Processor_Cssmin
