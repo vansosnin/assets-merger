@@ -43,10 +43,11 @@ abstract class Kohana_Asset
 	 *
 	 * @param string $type
 	 * @param string $file
+         * @param string $media
 	 *
 	 * @return string
 	 */
-	public static function html($type, $file)
+	public static function html($type, $file, $media = 'all')
 	{
 		// Set type for the proper HTML
 		switch ($type)
@@ -59,7 +60,7 @@ abstract class Kohana_Asset
 				break;
 		}
 
-		return Asset::$type($file);
+		return Asset::$type($file, $media);
 	}
 
 	public static function valid_url($file)
@@ -81,7 +82,7 @@ abstract class Kohana_Asset
 		)).'></script>';
 	}
 
-	protected static function style($file)
+	protected static function style($file, $media = 'all')
 	{
 		if (!Asset::valid_url($file))
 		{
@@ -90,8 +91,10 @@ abstract class Kohana_Asset
 		}
 
 		return '<link'.HTML::attributes(array(
+                        'type' => 'text/css',
 			'rel'  => 'stylesheet',
-			'href' => $file
+			'href' => $file,
+                        'media'=> $media,
 		)).'>';
 	}
 
@@ -130,11 +133,16 @@ abstract class Kohana_Asset
 	protected $_file = NULL;
 
 	/**
+	 * @var Specifies on what device the linked document will be displayed
+	 */
+	protected $_media = 'all';
+
+	/**
 	 * @var string load paths
 	 */
 	protected $_load_paths = NULL;
 
-	/**
+	/**string file
 	 * @var array engines
 	 */
 	protected $_engines = array();
@@ -235,6 +243,16 @@ abstract class Kohana_Asset
 	}
 
 	/**
+	 * Get specifies what media/device the target resource is optimized for.
+	 *
+	 * @return string
+	 */
+	public function media()
+	{
+		return $this->_media;
+	}
+
+	/**
 	 * Get the engines that will be used to compile this asset
 	 *
 	 * @return array
@@ -308,6 +326,12 @@ abstract class Kohana_Asset
 		elseif ($load_paths = Kohana::$config->load('asset-merger')->get('load_paths'))
 		{
 			$this->_load_paths = Arr::get($load_paths, $type);
+		}
+
+		// Set media
+		if (!empty($options['media']))
+		{
+			$this->_media = $options['media'];
 		}
 
 		// Set type and file
@@ -413,7 +437,7 @@ abstract class Kohana_Asset
 			file_put_contents($this->destination_file(), $this->compile($process));
 		}
 
-		return Asset::html($this->type(), $this->destination_web(), $this->last_modified());
+		return Asset::html($this->type(), $this->destination_web(), $this->media());
 	}
 
 	/**
