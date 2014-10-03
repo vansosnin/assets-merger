@@ -195,14 +195,14 @@ abstract class Kohana_Assets {
 		// Set copy
         if ($copy === NULL)
 		{
-            if (Kohana::$config->load('asset-merger')->get('debug')) 
+            if (Kohana::$config->load('asset-merger')->get('debug'))
             {
                 $this->_copy = FALSE;
             }
             else
             {
                 $this->_copy = TRUE;
-            }      
+            }
         }
         else
         {
@@ -217,7 +217,7 @@ abstract class Kohana_Assets {
         else
         {
             $this->_folder = $folder;
-        }  
+        }
 
 		foreach (array_keys(Kohana::$config->load('asset-merger.load_paths')) as $type)
 		{
@@ -427,8 +427,9 @@ abstract class Kohana_Assets {
 	{
 		if (Asset::valid_url($file))
 		{
+                        $media = !empty($options['media']) ? $options['media'] : 'all';
 			// Remote asset
-			$remote = Asset::html($type, $file);
+			$remote = Asset::html($type, $file, $media);
 
 			if ($condition = Arr::get($options, 'condition'))
 			{
